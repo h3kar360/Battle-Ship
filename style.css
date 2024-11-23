@@ -1,3 +1,4 @@
+/*the baord*/
 #board {
     display: grid;
     grid-template-columns: repeat(10, 50px);
@@ -34,3 +35,36 @@
     justify-content: space-around;
 }
 
+/*the ships*/
+#ship-dock{
+    padding: 10px 5px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+#ship-dock > button{
+    border: none;
+    height: 20px;
+    background-color: grey;
+}
+
+#ship-dock > button:hover, #ship-dock > button:focus{
+    background-color: rgb(88, 88, 88);
+}
+
+#carrier{
+    width: 100px;
+}
+
+#battleship{
+    width: 80px;
+}
+
+#cruiser, #submarine{
+    width: 60px;
+}
+
+#destroyer{
+    width: 40px;
+}
