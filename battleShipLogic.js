@@ -56,18 +56,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
                             if(e.target.id === "carrier"){
                                 Carrier.hoverBoard();
+                                updateBoard();
                             }
                             else if(e.target.id === "battleship"){
                                 Battleship.hoverBoard();
+                                updateBoard();
                             }
                             else if(e.target.id === "cruiser"){
                                 Cruiser.hoverBoard();
+                                updateBoard();
                             }
                             else if(e.target.id === "submarine"){
                                 Submarine.hoverBoard();
+                                updateBoard();
                             }
                             else if(e.target.id === "destroyer"){
                                 Destroyer.hoverBoard();
+                                updateBoard();
                             }                            
                         });
                     });
@@ -79,7 +84,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //update the board
     const updateBoard = () => {
-        const cell = document.querySelectorAll('cell');
+        const cellDiv = document.querySelectorAll('.cell');
+
+        //shade cells when certain ships hovered
+        for (let row = 0; row < board[0].length; row++) {
+            for (let cell = 0; cell < board[0].length; cell++) {                
+                if(board[row][cell] === 1){                    
+                    cellDiv[cell + row * board[0].length].style.backgroundColor = 'red';
+                }
+            }
+        }
         
     }
     
