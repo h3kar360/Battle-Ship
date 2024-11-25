@@ -32,7 +32,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         hoverBoard(){            
             if(!rotate){
+                //check if hover exceeds boundaries
                 if((y[1] + this.size - 1) < board[0].length){
+                    //check for collision
+                    for (let i = 0; i < this.size; i++) {
+                        if(board[y[1] + i][x[1]] === 2){
+                            return;
+                        }
+                    }
+
                     for (let i = 0; i < this.size; i++) {
                         board[y[1] + i][x[1]] = 1;                        
                     }
@@ -43,6 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             else if(rotate){
                 if((x[1] + this.size - 1) < board[0].length){
+                    for (let i = 0; i < this.size; i++) {
+                        if(board[y[1]][x[1] + i] === 2){
+                            return;
+                        }
+                    }
+
                     for (let i = 0; i < this.size; i++) {
                         board[y[1]][x[1] + i] = 1;                        
                     }
@@ -72,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     for (let i = 0; i < this.size; i++) {
                         board[y[1] + i][x[1]] = 2;
                     }
-                    
+
                     x[0] = null;
                     y[0] = null;
                 }
@@ -93,11 +107,25 @@ document.addEventListener('DOMContentLoaded', () => {
         rotateShip(){
             if(rotate){
                 for (let i = 0; i < this.size; i++) {
+                    if(board[y[1]][x[1] + i] === 2){
+                        rotate = !rotate;
+                        return;
+                    }
+                }
+
+                for (let i = 0; i < this.size; i++) {
                     board[y[1] + i][x[1]] = 0;
                     board[y[1]][x[1] + i] = 1;             
                 }
             }
             else if(!rotate){
+                for (let i = 0; i < this.size; i++) {
+                    if(board[y[1] + i][x[1]] === 2){
+                        rotate = !rotate;
+                        return;
+                    }
+                }
+
                 for (let i = 0; i < this.size; i++) {
                     board[y[1]][x[1] + i] = 0;
                     board[y[1] + i][x[1]] = 1;                    
