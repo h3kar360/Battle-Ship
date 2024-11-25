@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     //board
-    let board = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    const board = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -50,8 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     x[0] = x[1];
                     y[0] = y[1];
                 }
-            }
-            
+            }            
         }
 
         awayCell(){
@@ -60,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     board[y[0] + i][x[0]] = 0;                        
                 }
             }
-            else if (rotate){
+            else if(rotate){
                 for (let i = 0; i < this.size; i++) {
                     board[y[0]][x[0] + i] = 0;                        
                 }
@@ -68,14 +67,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         selectCell(){
-            for (let i = 0; i < this.size; i++) {
-                if(!rotate){
-                    board[y[1] + i][x[1]] = 2;
+            if (!rotate){
+                if ((y[1] + this.size - 1) < board[0].length) {
+                    for (let i = 0; i < this.size; i++) {
+                        board[y[1] + i][x[1]] = 2;
+                    }
+                    
+                    x[0] = null;
+                    y[0] = null;
                 }
-                else if(rotate){
-                    board[y[1]][x[1] + i] = 2;
-                }    
-            }             
+            }
+            else if(rotate){
+                if ((x[1] + this.size - 1) < board[0].length) {
+                    for (let i = 0; i < this.size; i++) {
+                        board[y[1]][x[1] + i] = 2;
+                    }
+
+                    x[0] = null;
+                    y[0] = null;
+                }
+            }
+        
         }       
        
         rotateShip(){
@@ -105,29 +117,39 @@ document.addEventListener('DOMContentLoaded', () => {
     dock.addEventListener('click', (e) => {
         switch (e.target.id) {
             case "carrier":
-                currentShip = Carrier;
-                currentShipSize = Carrier.size;
+                if(e.target.getAttribute('clicked') === 'false'){
+                    currentShip = Carrier;
+                    currentShipSize = Carrier.size;
+                }                
                 break;
             case "battleship":
-                currentShip = Battleship;
-                currentShipSize = Battleship.size;
+                if(e.target.getAttribute('clicked') === 'false'){
+                    currentShip = Battleship;
+                    currentShipSize = Battleship.size;
+                } 
                 break;
             case "cruiser":
-                currentShip = Cruiser;
-                currentShipSize = Cruiser.size;
+                if(e.target.getAttribute('clicked') === 'false'){                    
+                    currentShip = Cruiser;
+                    currentShipSize = Cruiser.size;
+                } 
                 break;
             case "submarine":
-                currentShip = Submarine;
-                currentShipSize = Submarine.size;
+                if(e.target.getAttribute('clicked') === 'false'){
+                    currentShip = Submarine;
+                    currentShipSize = Submarine.size;
+                }
                 break;
             case "destroyer":
-                currentShip = Destroyer;
-                currentShipSize = Destroyer.size;
+                if(e.target.getAttribute('clicked') === 'false'){
+                    currentShip = Destroyer;
+                    currentShipSize = Destroyer.size;
+                }
                 break;
             default:
                 currentShip = null;
                 currentShipSize = 0;
-        }
+        }        
     });
 
     //create board
@@ -139,22 +161,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(board[row][cell] === 0){                    
                     dock.addEventListener('click', (e) => {
                         createCell.addEventListener('mouseover', () => {
-                            x[1] = cell;
-                            y[1] = row;
+                            if(e.target.getAttribute('clicked') === 'false'){
+                                x[1] = cell;
+                                y[1] = row;
 
-                            currentShip.hoverBoard();                    
-                            updateBoard();                            
+                                currentShip.hoverBoard();                    
+                                updateBoard();
+                            }                            
                         });
 
                         createCell.addEventListener('mouseout', () => {
-                            currentShip.awayCell();
-                            updateBoard();
+                            if(e.target.getAttribute('clicked') === 'false'){
+                                currentShip.awayCell();
+                                updateBoard();
+                            }
                         });
 
                         createCell.addEventListener('click', () => {
-                            currentShip.selectCell();
-                            updateBoard();
-                        });
+                            if(e.target.getAttribute('clicked') === 'false'){
+                                currentShip.selectCell();
+                                updateBoard();
+                                e.target.setAttribute('clicked', 'true');
+                            }
+                        });;                        
                     });
 
                     dock.addEventListener('keydown', (e) => {
