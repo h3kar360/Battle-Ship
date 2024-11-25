@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     //board
-    const board = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    let board = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
     //ship variables
     let currentShip;
     let currentShipSize = 0;
+    //rotate bools
+    let rotate = false;
+    let keyPressed = false;
 
     //ship class
     class Ship{
@@ -27,32 +30,67 @@ document.addEventListener('DOMContentLoaded', () => {
             this.size = size;
         }
 
-        hoverBoard(){
-            if((y[1] + this.size - 1) < board[0].length){
-                for (let i = 0; i < this.size; i++) {
-                    if(board[y[1] + i][x[1]] !== 2){
-                        board[y[1] + i][x[1]] = 1;
-                    }                    
-                }    
-                x[0] = x[1];
-                y[0] = y[1];              
-            }            
+        hoverBoard(){            
+            if(!rotate){
+                if((y[1] + this.size - 1) < board[0].length){
+                    for (let i = 0; i < this.size; i++) {
+                        board[y[1] + i][x[1]] = 1;                        
+                    }
+
+                    x[0] = x[1];
+                    y[0] = y[1];
+                }
+            }
+            else if(rotate){
+                if((x[1] + this.size - 1) < board[0].length){
+                    for (let i = 0; i < this.size; i++) {
+                        board[y[1]][x[1] + i] = 1;                        
+                    }
+
+                    x[0] = x[1];
+                    y[0] = y[1];
+                }
+            }
+            
         }
 
         awayCell(){
-            for (let i = 0; i < this.size; i++) {
-                if(board[y[0] + i][x[0]] !== 2){
-                    board[y[0] + i][x[0]] = 0;
+            if(!rotate){
+                for (let i = 0; i < this.size; i++) {
+                    board[y[0] + i][x[0]] = 0;                        
                 }
-            }    
+            }
+            else if (rotate){
+                for (let i = 0; i < this.size; i++) {
+                    board[y[0]][x[0] + i] = 0;                        
+                }
+            }  
         }
 
         selectCell(){
             for (let i = 0; i < this.size; i++) {
-                if(board[y[1] + i][x[1]] !== 2){
+                if(!rotate){
                     board[y[1] + i][x[1]] = 2;
-                }  
+                }
+                else if(rotate){
+                    board[y[1]][x[1] + i] = 2;
+                }    
             }             
+        }       
+       
+        rotateShip(){
+            if(rotate){
+                for (let i = 0; i < this.size; i++) {
+                    board[y[1] + i][x[1]] = 0;
+                    board[y[1]][x[1] + i] = 1;             
+                }
+            }
+            else if(!rotate){
+                for (let i = 0; i < this.size; i++) {
+                    board[y[1]][x[1] + i] = 0;
+                    board[y[1] + i][x[1]] = 1;                    
+                }                    
+            }
         }
     }
 
@@ -116,7 +154,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         createCell.addEventListener('click', () => {
                             currentShip.selectCell();
                             updateBoard();
-                        })
+                        });
+                    });
+
+                    dock.addEventListener('keydown', (e) => {
+                        if(e.code === 'ArrowDown' && !keyPressed){
+                            rotate = !rotate;
+                            currentShip.rotateShip();
+                            updateBoard();
+                            keyPressed = true;                                                        
+                        } 
+                    });
+
+                    dock.addEventListener('keyup', (e) => {
+                        if(e.code === 'ArrowDown' && keyPressed){
+                            keyPressed = false;
+                        }
                     });
                     container.appendChild(createCell);
                 }
