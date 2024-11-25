@@ -1,5 +1,10 @@
 /*the baord*/
-#board {
+.radar{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+#board, #enemy-board{
     display: grid;
     grid-template-columns: repeat(10, 50px);
     grid-template-rows:  repeat(10, 50px);
@@ -67,4 +72,9 @@
 
 #destroyer{
     width: 40px;
+}
+
+/*radar*/
+.nuclear-launcher{
+    margin-top: 10px;
 }

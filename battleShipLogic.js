@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //initialise imports
     const container = document.getElementById('board');
     const dock = document.getElementById('ship-dock');
+    const enemyBoard = document.getElementById('enemy-board');
     //coordinates
     let x = [null, null];
     let y = [null, null];
@@ -209,6 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             if(e.target.getAttribute('clicked') === 'false'){
                                 currentShip.selectCell();
                                 updateBoard();
+                                e.target.style.backgroundColor = 'green';
                                 e.target.setAttribute('clicked', 'true');
                             }
                         });;                        
@@ -230,6 +232,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     container.appendChild(createCell);
                 }
+            }
+        }
+    }
+
+    //create enemy board
+    const createEnemyBoard = () => {
+        for (let row = 0; row < board[0].length; row++) {
+            for (let cell = 0; cell < board[0].length; cell++) {
+                const createCell = document.createElement('div');
+                createCell.classList.add('cell');
+                enemyBoard.appendChild(createCell);
             }
         }
     }
@@ -258,6 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //logic
     createBoard();
+    createEnemyBoard();
 
     //events
     
