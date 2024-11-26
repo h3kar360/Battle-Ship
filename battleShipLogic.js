@@ -10,11 +10,25 @@ document.addEventListener('DOMContentLoaded', () => {
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+
+    //enemy board
+    let enemyBoard = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
     
     //initialise imports
     const container = document.getElementById('board');
     const dock = document.getElementById('ship-dock');
-    const enemyBoard = document.getElementById('enemy-board');
+    const enemyContainer = document.getElementById('enemy-board');
+    const launchInput = document.getElementById('input-coordinate');
+    const launchButton = document.getElementById('launch-button');
     //coordinates
     let x = [null, null];
     let y = [null, null];
@@ -24,11 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
     //rotate bools
     let rotate = false;
     let keyPressed = false;
-
+    //map for coordinates
+    const coordLetters = { 'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8, 'J': 9 };
+    
     //ship class
     class Ship{
         constructor(size){
             this.size = size;
+            this.selected = false;
         }
 
         hoverBoard(){            
@@ -82,11 +99,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         selectCell(){
+            this.selected = false;
+
             if (!rotate){
                 if ((y[1] + this.size - 1) < board[0].length) {
                     for (let i = 0; i < this.size; i++) {
+                        if(board[y[1] + i][x[1]] !== 1){
+                            return;
+                        }
+                    }
+
+                    for (let i = 0; i < this.size; i++) {
                         board[y[1] + i][x[1]] = 2;
                     }
+
+                    this.selected = true;
 
                     x[0] = null;
                     y[0] = null;
@@ -95,14 +122,21 @@ document.addEventListener('DOMContentLoaded', () => {
             else if(rotate){
                 if ((x[1] + this.size - 1) < board[0].length) {
                     for (let i = 0; i < this.size; i++) {
+                        if(board[y[1]][x[1] + i] !== 1){
+                            return;
+                        }
+                    }
+
+                    for (let i = 0; i < this.size; i++) {
                         board[y[1]][x[1] + i] = 2;
                     }
+
+                    this.selected = true;
 
                     x[0] = null;
                     y[0] = null;
                 }
-            }
-        
+            }                  
         }       
        
         rotateShip(){
@@ -207,13 +241,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
 
                         createCell.addEventListener('click', () => {
+                            currentShip.selected = false;
                             if(e.target.getAttribute('clicked') === 'false'){
                                 currentShip.selectCell();
-                                updateBoard();
-                                e.target.style.backgroundColor = 'green';
-                                e.target.setAttribute('clicked', 'true');
+                                
+                                if(currentShip.selected){
+                                    updateBoard();
+                                    e.target.style.backgroundColor = 'green';
+                                    e.target.setAttribute('clicked', 'true');
+                                }
+                                
+                                if(checkShips()){
+                                    alert('all are filled')
+                                }
                             }
-                        });;                        
+                        });                        
                     });
 
                     dock.addEventListener('keydown', (e) => {
@@ -238,17 +280,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //create enemy board
     const createEnemyBoard = () => {
-        for (let row = 0; row < board[0].length; row++) {
-            for (let cell = 0; cell < board[0].length; cell++) {
+        for (let row = 0; row < enemyBoard[0].length; row++) {
+            for (let cell = 0; cell < enemyBoard[0].length; cell++) {
                 const createCell = document.createElement('div');
                 createCell.classList.add('cell');
-                enemyBoard.appendChild(createCell);
+                enemyContainer.appendChild(createCell);
             }
         }
-    }
+    }   
 
     //update the board
-    const updateBoard = () => {
+    const updateBoard = () => {    
         const cellDiv = document.querySelectorAll('.cell');
 
         //shade cells when certain ships hovered
@@ -267,13 +309,45 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
     }
-    
+
+    //check if all ships are placed
+    const checkShips = () => {
+        for (let i = 0; i < 5; i++) {
+            if(dock.children[i].getAttribute('clicked') === 'false'){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    //update enemy board
+    launchButton.addEventListener('click', () => {
+        const input = launchInput.value;
+                
+        const arrInput = input.split('');
+
+        console.log(arrInput);
+        enemyBoard[arrInput[1]][coordLetters[arrInput[0].toUpperCase()]] = 1;
+        console.log(enemyBoard);
+        
+        updateLaunchBoard();
+    });
+
+    //update the launch baord
+    const updateLaunchBoard = () => {
+        const cellDiv = document.querySelectorAll('.cell');
+
+        for (let row = 0; row < enemyBoard[0].length; row++) {
+            for (let cell = 0; cell < enemyBoard[0].length; cell++) {
+                if(enemyBoard[row][cell] === 1){
+                    cellDiv[(cell + (row - 1) * (enemyBoard[0].length)) + Math.pow(enemyBoard[0].length, 2)].style.backgroundColor = 'grey';
+                }
+            }
+        }
+    };   
 
     //logic
     createBoard();
-    createEnemyBoard();
-
-    //events
-    
-    
+    createEnemyBoard();    
 });
