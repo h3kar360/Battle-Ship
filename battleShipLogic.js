@@ -169,12 +169,89 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    //enemy ship class
+    class EnemyShip{
+        constructor(size){
+            this.size = size;
+            this.horizontalClear = true;
+            this.verticalClear = true;
+            this.sink = false;
+        }
+
+        placeShips(){
+            const randCoordX = Math.floor(Math.random() * enemyBoard[0].length);
+            const randCoordY = Math.floor(Math.random() * enemyBoard[0].length);
+
+            //reset
+            this.horizontalClear = true;
+            this.verticalClear = true;
+            
+            // Check horizontal clearance
+            if(randCoordX + this.size - 1 < enemyBoard[0].length){
+                for (let i = 0; i < this.size; i++) {
+                    if (enemyBoard[randCoordY][randCoordX + i] === 2) {
+                        this.horizontalClear = false;
+                        break;
+                    }
+                }
+            } 
+            else{
+                this.horizontalClear = false; // Out of bounds
+            }
+
+            // Check vertical clearance
+            if(randCoordY + this.size - 1 < enemyBoard.length){
+                for (let i = 0; i < this.size; i++) {
+                    if (enemyBoard[randCoordY + i][randCoordX] === 2) {
+                        this.verticalClear = false;
+                        break;
+                    }
+                }
+            } 
+            else{
+                this.verticalClear = false; // Out of bounds
+            }
+
+            //compare and recurse
+            if(this.horizontalClear && this.verticalClear){
+                //randomly pick placing ships horizontally or vertically
+                const horOrVer = Math.floor(Math.random() * 2);
+
+                if (horOrVer === 0) {
+                    for (let i = 0; i < this.size; i++) {
+                        enemyBoard[randCoordY][randCoordX + i] = 2;
+                    }
+                } else {
+                    for (let i = 0; i < this.size; i++) {
+                        enemyBoard[randCoordY + i][randCoordX] = 2;
+                    }
+                }
+            }
+            else if(this.horizontalClear && !this.verticalClear){
+                for (let i = 0; i < this.size; i++) {
+                    enemyBoard[randCoordY][randCoordX + i] = 2;                            
+                }
+            }
+            else if(!this.horizontalClear && this.verticalClear){
+                for (let i = 0; i < this.size; i++) {
+                    enemyBoard[randCoordY + i][randCoordX] = 2;                            
+                }
+            }
+            else{
+                return this.placeShips();
+            }
+        }
+    }
+
     //initialise ship classes
     const Carrier = new Ship(5);
     const Battleship = new Ship(4);
     const Cruiser = new Ship(3);
     const Submarine = new Ship(3);
     const Destroyer = new Ship(2);
+
+    //initialise enemy ship classes
+    const EnemyShips = [new EnemyShip(5), new EnemyShip(4), new EnemyShip(3), new EnemyShip(3), new EnemyShip(2)];
 
     //event listener to identify ship
     dock.addEventListener('click', (e) => {
@@ -320,7 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return true;
     }
-
+    
     //update enemy board
     launchButton.addEventListener('click', () => {
         const input = launchInput.value;
@@ -343,11 +420,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(enemyBoard[row][cell] === 1){
                     cellDiv[(cell + (row - 1) * (enemyBoard[0].length)) + Math.pow(enemyBoard[0].length, 2)].style.backgroundColor = 'grey';
                 }
+                else if(enemyBoard[row][cell] === 2){
+                    cellDiv[(cell + (row) * (enemyBoard[0].length)) + Math.pow(enemyBoard[0].length, 2)].style.backgroundColor = 'yellow';
+                }
             }
         }
     };   
 
     //logic
     createBoard();
-    createEnemyBoard();    
+    createEnemyBoard(); 
+    
+    for (let i = 0; i < 5; i++) {
+        EnemyShips[i].placeShips();
+    }
+    updateLaunchBoard();
 });
