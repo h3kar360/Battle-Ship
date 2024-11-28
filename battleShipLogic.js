@@ -583,7 +583,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkEnemyWin = () => {
         for (let row = 0; row < board[0].length; row++) {
             for (let cell = 0; cell < board[0].length; cell++) {
-                if(board[row][cell] === 3){
+                if(board[row][cell] === 2){
                     return false;
                 }
             }
