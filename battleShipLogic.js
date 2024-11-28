@@ -413,16 +413,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //update enemy board
     launchButton.addEventListener('click', () => {
-        //if(checkShips()){
-            // const input = launchInput.value;
+        if(checkShips()){
+            const input = launchInput.value;
 
-            // const arrInput = input.split(' ');
+            const arrInput = input.split(' ');
 
-            // checkHit(arrInput);
+            checkHit(arrInput);
 
-            // updateLaunchBoard();
+            updateLaunchBoard();
 
-            // launchInput.value = '';
+            launchInput.value = '';
 
             computerAtk();
             updateBoard();
@@ -430,11 +430,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if(checkWin()){
                 alert('you won!');
             }
-        // }
-        // else{
-        //     alert('place all your ships first admiral!');
-        //     launchInput.value = '';
-        // }
+
+            if(checkEnemyWin()){
+                alert('you lost!');
+            }
+        }
+        else{
+            alert('place all your ships first admiral!');
+            launchInput.value = '';
+        }
     });
 
     //check if enemy ship is hit
@@ -456,9 +460,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 //hit target
                 if(enemyBoard[row][cell] === 1){
                     cellDiv[(cell + (row) * (enemyBoard[0].length)) + Math.pow(enemyBoard[0].length, 2)].style.backgroundColor = 'red';
-                }
-                else if(enemyBoard[row][cell] === 2){
-                    cellDiv[(cell + (row) * (enemyBoard[0].length)) + Math.pow(enemyBoard[0].length, 2)].style.backgroundColor = 'yellow';
                 }
                 //missile miss
                 else if(enemyBoard[row][cell] === 3){
@@ -498,20 +499,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    let cell;
+
     //computer attack
     const computerAtk = () => {
         if (!startThink) {
             if (cells.length > 0) {
                 const randIndex = Math.floor(Math.random() * cells.length);
-                const cell = cells[randIndex];
+                cell = cells[randIndex];
                 cells.splice(randIndex, 1);
-    
+        
                 if (board[cell[1]][cell[0]] === 2) {
                     board[cell[1]][cell[0]] = 3;
-                    chosenX = cell[0];
-                    chosenY = cell[1];
-                    initX = cell[0];
-                    initY = cell[1];
+                    chosenX = initX = cell[0];
+                    chosenY = initY = cell[1];
                     startThink = true;
                     alt = 1;
                     pattern = 0;
@@ -528,49 +529,66 @@ document.addEventListener('DOMContentLoaded', () => {
                 { dx: 0, dy: 1 },
                 { dx: 0, dy: -1 },
             ];
-    
-            if (compChoice === null) {
-                const opt = Math.floor(Math.random() * pickOption.length);           
-
-                pickCell = pickOption[opt];
-                pickOption.splice(opt, 1);
+        
+            if (compChoice === null && pickOption.length > 0) {
+                const opt = Math.floor(Math.random() * pickOption.length);
+                pickCell = pickOption.splice(opt, 1)[0];
             } else {
                 pickCell = compChoice;
                 pickOption = [0, 1, 2, 3];
             }
-    
+        
             const { dx, dy } = directions[pickCell];
             const newX = chosenX + dx;
             const newY = chosenY + dy;
-    
+        
             if (newY >= 0 && newY < board.length && newX >= 0 && newX < board[0].length) {
                 const index = cells.findIndex(([x, y]) => x === newX && y === newY);
-                if (index !== -1) 
+        
+                if (index !== -1) {
                     cells.splice(index, 1);
-    
-                if (board[newY][newX] === 2) {
-                    board[newY][newX] = 3;
-                    compChoice = pickCell;
-                    chosenX = newX;
-                    chosenY = newY;
-                    pattern++;
-                } else if (board[newY][newX] === 0) {
-                    board[newY][newX] = 4;
-                    if (alt <= 0) {
-                        compChoice = null;
-                        startThink = false;
-                    } 
-                    else if(pattern > 1 && alt > 0){
-                        compChoice = pickCell % 2 === 0 ? pickCell + 1 : pickCell - 1;
-                        chosenX = initX;
-                        chosenY = initY;
-                        alt--;
+        
+                    if (board[newY][newX] === 2) {
+                        board[newY][newX] = 3;
+                        compChoice = pickCell;
+                        chosenX = newX;
+                        chosenY = newY;
+                        pattern++;
+                    } else if (board[newY][newX] === 0) {
+                        board[newY][newX] = 4;
+                        if (alt <= 0) {
+                            compChoice = null;
+                            startThink = false;
+                        } else if (pattern >= 1 && alt > 0) {
+                            compChoice = pickCell % 2 === 0 ? pickCell + 1 : pickCell - 1;
+                            chosenX = initX;
+                            chosenY = initY;
+                            alt--;
+                        }
                     }
+                } else {                  
+                    compChoice = null;
+                    startThink = false;
+                    return computerAtk();
                 }
             } else {
-                console.error("Out of bounds!");
+                compChoice = null;
+                startThink = false;
+                return computerAtk();
+            }
+        }        
+    }
+
+    //check enemy win
+    const checkEnemyWin = () => {
+        for (let row = 0; row < board[0].length; row++) {
+            for (let cell = 0; cell < board[0].length; cell++) {
+                if(board[row][cell] === 3){
+                    return false;
+                }
             }
         }
+        return true;
     }
     
     //logic
