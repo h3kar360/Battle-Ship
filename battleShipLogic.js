@@ -12,16 +12,16 @@ document.addEventListener('DOMContentLoaded', () => {
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
 
     //enemy board
-    let enemyBoard = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+    const enemyBoard = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
 
     //initialise imports
     const container = document.getElementById('board');
@@ -217,13 +217,14 @@ document.addEventListener('DOMContentLoaded', () => {
             //compare and recurse
             if(this.horizontalClear && this.verticalClear){
                 //randomly pick placing ships horizontally or vertically
-                const horOrVer = Math.floor(Math.random());
+                const horOrVer = Math.floor(Math.random() * 2);
 
-                if (horOrVer === 0) {
+                if(horOrVer === 0){
                     for (let i = 0; i < this.size; i++) {
                         enemyBoard[randCoordY][randCoordX + i] = 2;
                     }
-                } else {
+                } 
+                else{
                     for (let i = 0; i < this.size; i++) {
                         enemyBoard[randCoordY + i][randCoordX] = 2;
                     }
