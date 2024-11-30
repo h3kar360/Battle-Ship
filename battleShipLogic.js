@@ -412,34 +412,38 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     }
 
+    let shots = 0;
+
     //update enemy board
     launchButton.addEventListener('click', () => {
-        // if(checkShips()){
-            // const input = launchInput.value;
+        if(checkShips()){
+            const input = launchInput.value;
 
-            // const arrInput = input.split(' ');
+            const arrInput = input.split(' ');
 
-            // checkHit(arrInput);
+            checkHit(arrInput);
 
-            // updateLaunchBoard();
+            updateLaunchBoard();
 
-            // launchInput.value = '';
-
+            launchInput.value = '';
+            shots++;
             computerAtk();
             updateBoard();
 
             if(checkWin()){
-                alert('you won!');
+                alert('you win!');
             }
 
             if(checkEnemyWin()){
-                alert('you lost!');
+                alert('you lose!');
+                console.log(shots);
+                
             }
-        // }
-        // else{
-        //     alert('place all your ships first admiral!');
-        //     launchInput.value = '';
-        // }
+        }
+        else{
+            alert('place all your ships first admiral!');
+            launchInput.value = '';
+        }
     });
 
     //check if enemy ship is hit
@@ -525,10 +529,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (board[cell[1]][cell[0]] === 0) {
                     board[cell[1]][cell[0]] = 4;
                 }
-            } else {
-                console.error("No cells left to attack!");
-            }
-        } else {
+            } 
+        } 
+        else {
             const directions = [
                 { dx: 1, dy: 0 },
                 { dx: -1, dy: 0 },
@@ -539,7 +542,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (compChoice === null && pickOption.length > 0) {
                 const opt = Math.floor(Math.random() * pickOption.length);
                 pickCell = pickOption.splice(opt, 1)[0];
-            } else {
+            }
+            else if(pickOption.length === 0){
+                pickCell = 0;
+            } 
+            else {
                 pickCell = compChoice;
                 pickOption = [0, 1, 2, 3];
             }
@@ -560,39 +567,41 @@ document.addEventListener('DOMContentLoaded', () => {
                         chosenX = newX;
                         chosenY = newY;
                         pattern++;
-                    } else if (board[newY][newX] === 0) {
+                    } 
+                    else if (board[newY][newX] === 0) {
                         board[newY][newX] = 4;
                         if (alt <= 0) {
                             compChoice = null;
                             startThink = false;
-                        } else if (pattern >= 1 && alt > 0) {
+                        } 
+                        else if (pattern >= 1 && alt > 0) {
                             compChoice = pickCell % 2 === 0 ? pickCell + 1 : pickCell - 1;
                             chosenX = initX;
                             chosenY = initY;
                             alt--;
                         }
                     }
-                } else {                  
-                    if(compChoice === null && pickOption.length !== 0){
+                } else { 
+                    if(compChoice === null){
                         startThink = true; 
+                        return computerAtk();
                     }
                     else{
                         if (alt <= 0) {
                             compChoice = null;
                             startThink = false;
-                        } else if (pattern >= 1 && alt > 0) {
+                        } 
+                        else if (pattern >= 1 && alt > 0) {
                             compChoice = pickCell % 2 === 0 ? pickCell + 1 : pickCell - 1;
                             chosenX = initX;
                             chosenY = initY;
                             alt--;
-                        }                       
-                    }                    
-                                        
-                    return computerAtk();
+                        }  
+                        return computerAtk();                     
+                    } 
                 }
             } else {
                 if(compChoice === null){
-                    compChoice = null;
                     startThink = true;
                     return computerAtk();
                 }
@@ -600,7 +609,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     compChoice = null;
                     startThink = false;
                     return computerAtk();
-                }
+                }                
             }
         }        
     }
