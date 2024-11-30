@@ -414,16 +414,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //update enemy board
     launchButton.addEventListener('click', () => {
-        if(checkShips()){
-            const input = launchInput.value;
+        // if(checkShips()){
+            // const input = launchInput.value;
 
-            const arrInput = input.split(' ');
+            // const arrInput = input.split(' ');
 
-            checkHit(arrInput);
+            // checkHit(arrInput);
 
-            updateLaunchBoard();
+            // updateLaunchBoard();
 
-            launchInput.value = '';
+            // launchInput.value = '';
 
             computerAtk();
             updateBoard();
@@ -435,11 +435,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if(checkEnemyWin()){
                 alert('you lost!');
             }
-        }
-        else{
-            alert('place all your ships first admiral!');
-            launchInput.value = '';
-        }
+        // }
+        // else{
+        //     alert('place all your ships first admiral!');
+        //     launchInput.value = '';
+        // }
     });
 
     //check if enemy ship is hit
@@ -508,7 +508,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (cells.length > 0) {
                 const randIndex = Math.floor(Math.random() * cells.length);
                 cell = cells[randIndex];
-                cells.splice(randIndex, 1);
+
+                if((cell[0] + cell[1]) % 2 === 0){
+                    return computerAtk();
+                }
+
+                cells.splice(randIndex, 1);               
         
                 if (board[cell[1]][cell[0]] === 2) {
                     board[cell[1]][cell[0]] = 3;
@@ -568,14 +573,34 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 } else {                  
+                    if(compChoice === null && pickOption.length !== 0){
+                        startThink = true; 
+                    }
+                    else{
+                        if (alt <= 0) {
+                            compChoice = null;
+                            startThink = false;
+                        } else if (pattern >= 1 && alt > 0) {
+                            compChoice = pickCell % 2 === 0 ? pickCell + 1 : pickCell - 1;
+                            chosenX = initX;
+                            chosenY = initY;
+                            alt--;
+                        }                       
+                    }                    
+                                        
+                    return computerAtk();
+                }
+            } else {
+                if(compChoice === null){
+                    compChoice = null;
+                    startThink = true;
+                    return computerAtk();
+                }
+                else{
                     compChoice = null;
                     startThink = false;
                     return computerAtk();
                 }
-            } else {
-                compChoice = null;
-                startThink = false;
-                return computerAtk();
             }
         }        
     }
