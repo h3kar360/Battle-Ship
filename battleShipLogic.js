@@ -539,7 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             compChoice = pickCell % 2 === 0 ? pickCell + 1 : pickCell - 1;
                             chosenX = initX;
                             chosenY = initY;
-                            alt--;
+                            alt = 0;
                         }
                     }
                 } else { 
@@ -556,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             compChoice = pickCell % 2 === 0 ? pickCell + 1 : pickCell - 1;
                             chosenX = initX;
                             chosenY = initY;
-                            alt--;
+                            alt = 0;
                         }  
                         return computerAtk();                     
                     } 
