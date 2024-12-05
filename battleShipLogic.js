@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //map for coordinates
     const coordLetters = { 'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8, 'J': 9 };
     //computer state whether it found a pattern
-    let startThink = false;
+    let startThink = false;    
 
     //ship class
     class Ship{
@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     for (let i = 0; i < this.size; i++) {
                         board[y[1] + i][x[1]] = 1;
+                        cellDiv[x[1] + (y[1] + i) * board[0].length].style.backgroundColor = 'red';
                     }
 
                     x[0] = x[1];
@@ -79,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     for (let i = 0; i < this.size; i++) {
                         board[y[1]][x[1] + i] = 1;
+                        cellDiv[(x[1] + i) + y[1] * board[0].length].style.backgroundColor = 'red';
                     }
 
                     x[0] = x[1];
@@ -91,11 +93,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if(!rotate){
                 for (let i = 0; i < this.size; i++) {
                     board[y[0] + i][x[0]] = 0;
+                    cellDiv[x[0] + (y[0] + i) * board[0].length].style.backgroundColor = 'white';                    
                 }
             }
             else if(rotate){
                 for (let i = 0; i < this.size; i++) {
                     board[y[0]][x[0] + i] = 0;
+                    cellDiv[(x[0] + i) + y[0] * board[0].length].style.backgroundColor = 'white';
                 }
             }
         }
@@ -113,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     for (let i = 0; i < this.size; i++) {
                         board[y[1] + i][x[1]] = 2;
+                        cellDiv[x[1] + (y[1] + i) * board[0].length].style.backgroundColor = 'grey';
                     }
 
                     this.selected = true;
@@ -130,7 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     for (let i = 0; i < this.size; i++) {
-                        board[y[1]][x[1] + i] = 2;
+                        board[y[1]][x[1] + i] = 2;                        
+                        cellDiv[(x[1] + i) + y[1] * board[0].length].style.backgroundColor = 'grey';
                     }
 
                     this.selected = true;
@@ -152,7 +158,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 for (let i = 0; i < this.size; i++) {
                     board[y[1] + i][x[1]] = 0;
+                    cellDiv[x[1] + (y[1] + i) * board[0].length].style.backgroundColor = 'white';
                     board[y[1]][x[1] + i] = 1;
+                    cellDiv[(x[1] + i) + y[1] * board[0].length].style.backgroundColor = 'red';                    
                 }
             }
             else if(!rotate){
@@ -164,8 +172,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 for (let i = 0; i < this.size; i++) {
-                    board[y[1]][x[1] + i] = 0;
+                    board[y[1]][x[1] + i] = 0;                    
+                    cellDiv[(x[1] + i) + y[1] * board[0].length].style.backgroundColor = 'white';
                     board[y[1] + i][x[1]] = 1;
+                    cellDiv[x[1] + (y[1] + i) * board[0].length].style.backgroundColor = 'red';
                 }
             }
         }
@@ -301,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for (let cell = 0; cell < board[0].length; cell++) {
                 const createCell = document.createElement('div');
                 createCell.classList.add('cell');
-                if(board[row][cell] === 0){
+                if(board[row][cell] === 0){                    
                     dock.addEventListener('click', (e) => {
                         createCell.addEventListener('mouseover', () => {
                             if(e.target.getAttribute('clicked') === 'false'){
@@ -309,14 +319,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                 y[1] = row;
 
                                 currentShip.hoverBoard();
-                                updateBoard();
                             }
                         });
 
                         createCell.addEventListener('mouseout', () => {
                             if(e.target.getAttribute('clicked') === 'false'){
                                 currentShip.awayCell();
-                                updateBoard();
                             }
                         });
 
@@ -326,7 +334,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 currentShip.selectCell();
 
                                 if(currentShip.selected){
-                                    updateBoard();
                                     e.target.style.backgroundColor = 'green';
                                     e.target.setAttribute('clicked', 'true');
                                 }
@@ -342,7 +349,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         if(e.code === 'ArrowDown' && !keyPressed){
                             rotate = !rotate;
                             currentShip.rotateShip();
-                            updateBoard();
                             keyPressed = true;
                         }
                     });
@@ -352,11 +358,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             keyPressed = false;
                         }
                     });
+
                     container.appendChild(createCell);
                 }
             }
         }
     }
+
 
     //create enemy board
     const createEnemyBoard = () => {
@@ -367,39 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 enemyContainer.appendChild(createCell);
             }
         }
-    }
-
-    //update the board
-    const updateBoard = () => {
-        const cellDiv = document.querySelectorAll('.cell');
-
-        //shade cells when certain ships hovered
-        for (let row = 0; row < board[0].length; row++) {
-            for (let cell = 0; cell < board[0].length; cell++) {
-                //empty
-                if(board[row][cell] === 0){
-                    cellDiv[cell + row * board[0].length].style.backgroundColor = 'white';
-                }
-                //hover
-                else if(board[row][cell] === 1){
-                    cellDiv[cell + row * board[0].length].style.backgroundColor = 'red';
-                }
-                //selected
-                else if(board[row][cell] === 2){
-                    cellDiv[cell + row * board[0].length].style.backgroundColor = 'grey';
-                }
-                //hit by enemy
-                else if(board[row][cell] === 3){
-                    cellDiv[cell + row * board[0].length].style.backgroundColor = 'yellow';
-                }
-                //enemy miss
-                else if(board[row][cell] === 4){
-                    cellDiv[cell + row * board[0].length].style.backgroundColor = 'blue';
-                }
-            }
-        }
-
-    }
+    }    
 
     //check if all ships are placed
     const checkShips = () => {
@@ -423,12 +399,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             checkHit(arrInput);
 
-            updateLaunchBoard();
-
             launchInput.value = '';
             shots++;
             computerAtk();
-            updateBoard();
 
             if(checkWin()){
                 alert('you win!');
@@ -450,29 +423,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkHit = (arrInput) => {
         if(enemyBoard[arrInput[1] - 1][coordLetters[arrInput[0].toUpperCase()]] === 2){
             enemyBoard[arrInput[1] - 1][coordLetters[arrInput[0].toUpperCase()]] = 1;
+            cellDiv[((coordLetters[arrInput[0].toUpperCase()]) + (arrInput[1] - 1) * (enemyBoard[0].length)) + Math.pow(enemyBoard[0].length, 2)].style.backgroundColor = 'red';
         }
         else{
             enemyBoard[arrInput[1] - 1][coordLetters[arrInput[0].toUpperCase()]] = 3;
+            cellDiv[((coordLetters[arrInput[0].toUpperCase()]) + (arrInput[1] - 1) * (enemyBoard[0].length)) + Math.pow(enemyBoard[0].length, 2)].style.backgroundColor = 'blue';
         }
-    }
-
-    //update the launch baord
-    const updateLaunchBoard = () => {
-        const cellDiv = document.querySelectorAll('.cell');
-
-        for (let row = 0; row < enemyBoard[0].length; row++) {
-            for (let cell = 0; cell < enemyBoard[0].length; cell++) {
-                //hit target
-                if(enemyBoard[row][cell] === 1){
-                    cellDiv[(cell + (row) * (enemyBoard[0].length)) + Math.pow(enemyBoard[0].length, 2)].style.backgroundColor = 'red';
-                }
-                //missile miss
-                else if(enemyBoard[row][cell] === 3){
-                    cellDiv[(cell + (row) * (enemyBoard[0].length)) + Math.pow(enemyBoard[0].length, 2)].style.backgroundColor = 'blue';
-                }
-            }
-        }
-    };
+    }    
 
     //check if all ships have sinked
     const checkWin = () => {
@@ -521,6 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
                 if (board[cell[1]][cell[0]] === 2) {
                     board[cell[1]][cell[0]] = 3;
+                    cellDiv[cell[0] + cell[1] * board[0].length].style.backgroundColor = 'yellow';
                     chosenX = initX = cell[0];
                     chosenY = initY = cell[1];
                     startThink = true;
@@ -528,6 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     pattern = 0;
                 } else if (board[cell[1]][cell[0]] === 0) {
                     board[cell[1]][cell[0]] = 4;
+                    cellDiv[cell[0] + cell[1] * board[0].length].style.backgroundColor = 'blue';
                 }
             } 
         } 
@@ -563,6 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
                     if (board[newY][newX] === 2) {
                         board[newY][newX] = 3;
+                        cellDiv[newX + newY * board[0].length].style.backgroundColor = 'yellow';
                         compChoice = pickCell;
                         chosenX = newX;
                         chosenY = newY;
@@ -570,6 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } 
                     else if (board[newY][newX] === 0) {
                         board[newY][newX] = 4;
+                        cellDiv[newX + newY * board[0].length].style.backgroundColor = 'blue';
                         if (alt <= 0) {
                             compChoice = null;
                             startThink = false;
@@ -628,11 +589,14 @@ document.addEventListener('DOMContentLoaded', () => {
     
     //logic
     createBoard();
+    
     createEnemyBoard();
+
+    //get all the cells of the board for updates
+    const cellDiv = document.querySelectorAll('.cell');
 
     for (let i = 0; i < 5; i++) {
         EnemyShips[i].placeShips();
     }
-    updateLaunchBoard();
 
 });
