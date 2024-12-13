@@ -11,6 +11,18 @@ document.addEventListener('DOMContentLoaded', () => {
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
 
+    //pdf
+    const pdf = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+
     //enemy board
     const enemyBoard = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -391,26 +403,33 @@ document.addEventListener('DOMContentLoaded', () => {
     let shots = 0;
 
     //update enemy board
-    launchButton.addEventListener('click', () => {
-        if(checkShips()){
+    launchButton.addEventListener('click', () => {       
+
+        if(checkShips()){           
             const input = launchInput.value;
 
             const arrInput = input.split(' ');
 
-            checkHit(arrInput);
+            if(enemyBoard[arrInput[1] - 1][coordLetters[arrInput[0].toUpperCase()]] === 0){
+                checkHit(arrInput);
 
-            launchInput.value = '';
-            shots++;
-            computerAtk();
+                launchInput.value = '';
+                shots++;
+                computerAtk();
 
-            if(checkWin()){
-                alert('you win!');
+                if(checkWin()){
+                    alert('you win!');
+                }
+
+                if(checkEnemyWin()){
+                    alert('you lose!');
+                    console.log(shots);
+                    
+                }            
             }
-
-            if(checkEnemyWin()){
-                alert('you lose!');
-                console.log(shots);
-                
+            else{
+                alert('you hit the same cell admiral!');
+                launchInput.value = '';
             }
         }
         else{
@@ -573,6 +592,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }                
             }
         }        
+    }
+
+    const calcPDF = () => {
+        
     }
 
     //check enemy win
